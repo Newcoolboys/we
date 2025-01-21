@@ -47,18 +47,24 @@ func (b Brush) Use(p *player.Player) {
 	vec := p.Rotation().Vec3().Mul(maxDistance)
 	pos := p.Position().Add(mgl64.Vec3{0, p.EyeHeight()})
 
-	final := pos.Add(vec)
-	if res, ok := trace.Perform(pos, final, p.World(), bb, func(w world.Entity) bool { return w == p }); ok {
-		final = res.Position()
-	}
+	p.H().ExecWorld(func(tx *world.Tx, e world.Entity) {
+		if e != p {
+			return
+		}
 
-	h, _ := LookupHandler(p)
-	revert := Perform(cube.PosFromVec3(final), b.s, b.a, p.World())
-	if len(h.undo) == maxUndoCount {
-		h.undo = append(h.undo[1:], revert)
-		return
-	}
-	h.undo = append(h.undo, revert)
+		final := pos.Add(vec)
+		if res, ok := trace.Perform(pos, final, p.Tx(), bb, nil); ok {
+			final = res.Position()
+		}
+
+		h, _ := LookupHandler(p)
+		revert := Perform(cube.PosFromVec3(final), b.s, b.a, p.Tx().World())
+		if len(h.undo) == maxUndoCount {
+			h.undo = append(h.undo[1:], revert)
+			return
+		}
+		h.undo = append(h.undo, revert)
+	})
 }
 
 // Bind binds the Brush to the item.Stack i passed and returns a new item.Stack with the Brush bound to it.

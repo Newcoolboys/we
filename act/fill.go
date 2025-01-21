@@ -33,7 +33,7 @@ type fillForm struct {
 }
 
 // Submit ...
-func (s fillForm) Submit(submitter form.Submitter) {
+func (s fillForm) Submit(submitter form.Submitter, _ *world.Tx) {
 	p := submitter.(*player.Player)
 	ph, _ := palette.LookupHandler(p)
 	pal, ok := ph.Palette(s.Palette.Value())

@@ -1,7 +1,6 @@
 package brush
 
 import (
-	"github.com/df-mc/dragonfly/server/event"
 	"github.com/df-mc/dragonfly/server/player"
 	"sync"
 )
@@ -42,7 +41,7 @@ func (h *Handler) UndoLatest() bool {
 }
 
 // HandleItemUse activates the brush on a player's item if present.
-func (h *Handler) HandleItemUse(ctx *event.Context) {
+func (h *Handler) HandleItemUse(ctx *player.Context) {
 	held, _ := h.p.HeldItems()
 	if b, ok := find(held); ok {
 		ctx.Cancel()

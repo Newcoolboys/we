@@ -32,7 +32,9 @@ func (p Selection) Blocks() []world.Block {
 	}
 	m := make([]world.Block, 0, p.Dx()*p.Dy()*p.Dz())
 	p.Range(func(x, y, z int) {
-		m = append(m, p.w.Block(cube.Pos{x, y, z}))
+		p.w.Exec(func(tx *world.Tx) {
+			m = append(m, tx.Block(cube.Pos{x, y, z}))
+		})
 	})
 	return m
 }

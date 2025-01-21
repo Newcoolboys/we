@@ -15,7 +15,9 @@ func Perform(pos cube.Pos, s Shape, a Action, w *world.World) (revert func()) {
 	// The shapes measure according to a centre position, so the base of our structure is offset.
 	base := pos.Add(cube.Pos{-d[0] / 2, -d[1] / 2, -d[2] / 2})
 	st := &structure{base: base, s: s, a: a, d: d, w: w, cx: pos[0], cy: pos[1], cz: pos[2], m: make(map[cube.Pos]world.Block), r: rand.New(rand.NewSource(time.Now().UnixNano()))}
-	w.BuildStructure(base, st)
+	w.Exec(func(tx *world.Tx) {
+		tx.BuildStructure(base, st)
+	})
 	return st.Revert
 }
 
@@ -64,7 +66,9 @@ func (s *structure) blockAt(x, y, z int) world.Block {
 // Revert reverts the placement of the structure, placing back all blocks that were changed by the initial
 // placement.
 func (s *structure) Revert() {
-	s.w.BuildStructure(s.base, &structureRevert{d: s.d, m: s.m})
+	s.w.Exec(func(tx *world.Tx) {
+		tx.BuildStructure(s.base, &structureRevert{d: s.d, m: s.m})
+	})
 }
 
 // structureRevert represents a structure that handles the reverting of a normal structure.

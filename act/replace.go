@@ -44,7 +44,7 @@ type replaceForm struct {
 }
 
 // Submit ...
-func (s replaceForm) Submit(submitter form.Submitter) {
+func (s replaceForm) Submit(submitter form.Submitter, _ *world.Tx) {
 	p := submitter.(*player.Player)
 	ph, _ := palette.LookupHandler(p)
 	pal, ok := ph.Palette(s.BlockPalette.Value())
