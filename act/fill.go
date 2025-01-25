@@ -33,14 +33,14 @@ type fillForm struct {
 }
 
 // Submit ...
-func (s fillForm) Submit(submitter form.Submitter, _ *world.Tx) {
+func (s fillForm) Submit(submitter form.Submitter, tx *world.Tx) {
 	p := submitter.(*player.Player)
 	ph, _ := palette.LookupHandler(p)
 	pal, ok := ph.Palette(s.Palette.Value())
-	if !ok || len(pal.Blocks()) == 0 {
+	if !ok || len(pal.Blocks(tx)) == 0 {
 		p.Message(text.Colourf("<red>%v</red>", msg.InvalidPalette))
 		return
 	}
 	held, otherHeld := p.HeldItems()
-	p.SetHeldItems(brush.New(s.s, Fill{b: pal.Blocks()}).Bind(held), otherHeld)
+	p.SetHeldItems(brush.New(s.s, Fill{b: pal.Blocks(tx)}).Bind(held), otherHeld)
 }

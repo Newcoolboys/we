@@ -28,11 +28,11 @@ func (h *Handler) HandleItemUseOnBlock(ctx *player.Context, pos cube.Pos, face c
 	h.ph.HandleItemUseOnBlock(ctx, pos, face, vec)
 }
 
-func (h *Handler) HandleBlockBreak(ctx *player.Context, pos cube.Pos, drops *[]item.Stack) {
-	h.ph.HandleBlockBreak(ctx, pos, drops)
+func (h *Handler) HandleBlockBreak(ctx *player.Context, pos cube.Pos, drops *[]item.Stack, xp *int) {
+	h.ph.HandleBlockBreak(ctx, pos, drops, xp)
 }
 
-func (h *Handler) HandleQuit() {
+func (h *Handler) HandleQuit(_ *player.Player) {
 	h.bh.HandleQuit()
 	h.ph.HandleQuit()
 }

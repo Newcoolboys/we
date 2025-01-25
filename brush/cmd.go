@@ -3,6 +3,7 @@ package brush
 import (
 	"github.com/df-mc/dragonfly/server/cmd"
 	"github.com/df-mc/dragonfly/server/player"
+	"github.com/df-mc/dragonfly/server/world"
 	"github.com/df-mc/we/internal/msg"
 	"github.com/sandertv/gophertunnel/minecraft/text"
 )
@@ -14,7 +15,7 @@ type BindCommand struct {
 }
 
 // Run implements the binding of a Brush to the held item by sending a brush selection form.
-func (BindCommand) Run(src cmd.Source, o *cmd.Output) {
+func (BindCommand) Run(src cmd.Source, o *cmd.Output, _ *world.Tx) {
 	p := src.(*player.Player)
 
 	held, _ := p.HeldItems()
@@ -37,7 +38,7 @@ type UnbindCommand struct {
 }
 
 // Run implements the unbinding of a Brush bound to the item held.
-func (c UnbindCommand) Run(src cmd.Source, o *cmd.Output) {
+func (c UnbindCommand) Run(src cmd.Source, o *cmd.Output, _ *world.Tx) {
 	p := src.(*player.Player)
 
 	held, other := p.HeldItems()
@@ -56,7 +57,7 @@ type UndoCommand struct {
 }
 
 // Run implements the undoing of an action performed with a Brush.
-func (c UndoCommand) Run(src cmd.Source, o *cmd.Output) {
+func (c UndoCommand) Run(src cmd.Source, o *cmd.Output, _ *world.Tx) {
 	p := src.(*player.Player)
 	h, _ := LookupHandler(p)
 	if !h.UndoLatest() {

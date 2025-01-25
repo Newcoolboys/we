@@ -53,12 +53,12 @@ func (b Brush) Use(p *player.Player) {
 		}
 
 		final := pos.Add(vec)
-		if res, ok := trace.Perform(pos, final, p.Tx(), bb, nil); ok {
+		if res, ok := trace.Perform(pos, final, tx, bb, nil); ok {
 			final = res.Position()
 		}
 
 		h, _ := LookupHandler(p)
-		revert := Perform(cube.PosFromVec3(final), b.s, b.a, p.Tx().World())
+		revert := Perform(cube.PosFromVec3(final), b.s, b.a, tx.World())
 		if len(h.undo) == maxUndoCount {
 			h.undo = append(h.undo[1:], revert)
 			return

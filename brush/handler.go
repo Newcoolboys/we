@@ -10,7 +10,7 @@ var handlers sync.Map
 
 // LookupHandler finds the Handler of a specific player.Player, assuming it is currently online.
 func LookupHandler(p *player.Player) (*Handler, bool) {
-	v, _ := handlers.Load(p)
+	v, _ := handlers.Load(p.Name())
 	h, ok := v.(*Handler)
 	return h, ok
 }
@@ -25,7 +25,7 @@ type Handler struct {
 // NewHandler creates a new Handler for the *player.Player passed.
 func NewHandler(p *player.Player) *Handler {
 	h := &Handler{p: p}
-	handlers.Store(p, h)
+	handlers.Store(p.Name(), h)
 	return h
 }
 

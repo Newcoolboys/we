@@ -29,6 +29,6 @@ func (b Blocks) Write(w io.Writer) error {
 }
 
 // Blocks returns all world.Block passed to the NewBlocks function upon creation of the palette.
-func (b Blocks) Blocks() []world.Block {
+func (b Blocks) Blocks(_ *world.Tx) []world.Block {
 	return b.b
 }

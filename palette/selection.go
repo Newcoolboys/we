@@ -26,15 +26,13 @@ func (p Selection) Zero() bool {
 }
 
 // Blocks returns all world.Block present between two corners in the world passed to NewSelection upon creation.
-func (p Selection) Blocks() []world.Block {
+func (p Selection) Blocks(tx *world.Tx) []world.Block {
 	if p.Zero() {
 		return nil
 	}
 	m := make([]world.Block, 0, p.Dx()*p.Dy()*p.Dz())
 	p.Range(func(x, y, z int) {
-		p.w.Exec(func(tx *world.Tx) {
-			m = append(m, tx.Block(cube.Pos{x, y, z}))
-		})
+		m = append(m, tx.Block(cube.Pos{x, y, z}))
 	})
 	return m
 }

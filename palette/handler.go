@@ -17,7 +17,7 @@ var handlers sync.Map
 
 // LookupHandler finds the Handler of a specific player.Player, assuming it is currently online.
 func LookupHandler(p *player.Player) (*Handler, bool) {
-	v, _ := handlers.Load(p)
+	v, _ := handlers.Load(p.Name())
 	h, ok := v.(*Handler)
 	return h, ok
 }
@@ -38,7 +38,7 @@ type Handler struct {
 func NewHandler(p *player.Player) *Handler {
 	h := &Handler{p: p, close: make(chan struct{})}
 	go h.visualisePalette()
-	handlers.Store(p, h)
+	handlers.Store(p.Name(), h)
 	return h
 }
 
@@ -63,7 +63,7 @@ func (h *Handler) HandleItemUseOnBlock(ctx *player.Context, pos cube.Pos, _ cube
 }
 
 // HandleBlockBreak handles selection of a block for the palette.
-func (h *Handler) HandleBlockBreak(ctx *player.Context, pos cube.Pos, _ *[]item.Stack) {
+func (h *Handler) HandleBlockBreak(ctx *player.Context, pos cube.Pos, _ *[]item.Stack, _ *int) {
 	h.handleSelection(ctx, pos)
 }
 
@@ -92,7 +92,7 @@ func (h *Handler) handleSelection(ctx *player.Context, pos cube.Pos) {
 	}
 	// First point was selected, we now have a second point so we can create a palette.
 	h.p.Message(fmt.Sprintf(msg.SecondPointSelected, pos))
-	h.m = NewSelection(h.first, pos, h.p.Tx().World())
+	h.m = NewSelection(h.first, pos, ctx.Val().Tx().World())
 	h.p.Message(text.Colourf("<green>"+msg.PaletteCreated+"</green>", h.m.Min, h.m.Max))
 }
 

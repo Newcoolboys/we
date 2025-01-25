@@ -44,19 +44,19 @@ type replaceForm struct {
 }
 
 // Submit ...
-func (s replaceForm) Submit(submitter form.Submitter, _ *world.Tx) {
+func (s replaceForm) Submit(submitter form.Submitter, tx *world.Tx) {
 	p := submitter.(*player.Player)
 	ph, _ := palette.LookupHandler(p)
 	pal, ok := ph.Palette(s.BlockPalette.Value())
-	if !ok || len(pal.Blocks()) == 0 {
+	if !ok || len(pal.Blocks(tx)) == 0 {
 		p.Message(text.Colourf("<red>%v</red>", msg.InvalidPalette))
 		return
 	}
 	rPal, ok := ph.Palette(s.ReplacedPalette.Value())
-	if !ok || len(rPal.Blocks()) == 0 {
+	if !ok || len(rPal.Blocks(tx)) == 0 {
 		p.Message(text.Colourf("<red>%v</red>", msg.InvalidPalette))
 		return
 	}
 	held, otherHeld := p.HeldItems()
-	p.SetHeldItems(brush.New(s.s, Replace{b: pal.Blocks(), old: rPal.Blocks()}).Bind(held), otherHeld)
+	p.SetHeldItems(brush.New(s.s, Replace{b: pal.Blocks(tx), old: rPal.Blocks(tx)}).Bind(held), otherHeld)
 }
