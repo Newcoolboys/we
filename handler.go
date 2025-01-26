@@ -32,7 +32,7 @@ func (h *Handler) HandleBlockBreak(ctx *player.Context, pos cube.Pos, drops *[]i
 	h.ph.HandleBlockBreak(ctx, pos, drops, xp)
 }
 
-func (h *Handler) HandleQuit(_ *player.Player) {
-	h.bh.HandleQuit()
-	h.ph.HandleQuit()
+func (h *Handler) HandleQuit(p *player.Player) {
+	h.bh.HandleQuit(p)
+	h.ph.HandleQuit(p)
 }

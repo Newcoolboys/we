@@ -24,7 +24,6 @@ func LookupHandler(p *player.Player) (*Handler, bool) {
 
 // Handler handles the selection and storage of palettes during the session of a player.
 type Handler struct {
-	p        *player.Player
 	close    chan struct{}
 	palettes sync.Map
 
@@ -36,7 +35,7 @@ type Handler struct {
 
 // NewHandler creates a Handler for the *player.Player passed.
 func NewHandler(p *player.Player) *Handler {
-	h := &Handler{p: p, close: make(chan struct{})}
+	h := &Handler{close: make(chan struct{})}
 	go h.visualisePalette()
 	handlers.Store(p.Name(), h)
 	return h
@@ -68,9 +67,9 @@ func (h *Handler) HandleBlockBreak(ctx *player.Context, pos cube.Pos, _ *[]item.
 }
 
 // HandleQuit deletes the Handler from the handlers map.
-func (h *Handler) HandleQuit() {
+func (h *Handler) HandleQuit(p *player.Player) {
 	close(h.close)
-	handlers.Delete(h.p)
+	handlers.Delete(p.Name())
 }
 
 // handleSelection handles the selection of a point for a palette. If no palette is currently being selected,
@@ -87,13 +86,13 @@ func (h *Handler) handleSelection(ctx *player.Context, pos cube.Pos) {
 	if h.selecting == 1 {
 		// Selecting the first point: Store it in the handler and return.
 		h.first = pos
-		h.p.Message(fmt.Sprintf(msg.FirstPointSelected, pos))
+		ctx.Val().Message(fmt.Sprintf(msg.FirstPointSelected, pos))
 		return
 	}
 	// First point was selected, we now have a second point so we can create a palette.
-	h.p.Message(fmt.Sprintf(msg.SecondPointSelected, pos))
+	ctx.Val().Message(fmt.Sprintf(msg.SecondPointSelected, pos))
 	h.m = NewSelection(h.first, pos, ctx.Val().Tx().World())
-	h.p.Message(text.Colourf("<green>"+msg.PaletteCreated+"</green>", h.m.Min, h.m.Max))
+	ctx.Val().Message(text.Colourf("<green>"+msg.PaletteCreated+"</green>", h.m.Min, h.m.Max))
 }
 
 // visualisePalette continuously visualises the palette through particles in the world.

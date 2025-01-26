@@ -18,13 +18,12 @@ func LookupHandler(p *player.Player) (*Handler, bool) {
 // Handler implements the brushing of players. It enables activation of brushes and stores the data needed to
 // undo/redo those actions.
 type Handler struct {
-	p    *player.Player
 	undo []func()
 }
 
 // NewHandler creates a new Handler for the *player.Player passed.
 func NewHandler(p *player.Player) *Handler {
-	h := &Handler{p: p}
+	h := &Handler{}
 	handlers.Store(p.Name(), h)
 	return h
 }
@@ -42,14 +41,14 @@ func (h *Handler) UndoLatest() bool {
 
 // HandleItemUse activates the brush on a player's item if present.
 func (h *Handler) HandleItemUse(ctx *player.Context) {
-	held, _ := h.p.HeldItems()
+	held, _ := ctx.Val().HeldItems()
 	if b, ok := find(held); ok {
 		ctx.Cancel()
-		go b.Use(h.p, h.p.H())
+		go b.Use(ctx.Val().H())
 	}
 }
 
 // HandleQuit deletes the Handler from the handlers map.
-func (h *Handler) HandleQuit() {
-	handlers.Delete(h.p)
+func (h *Handler) HandleQuit(p *player.Player) {
+	handlers.Delete(p.Name())
 }
