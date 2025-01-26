@@ -39,18 +39,14 @@ func (b Brush) UUID() uuid.UUID {
 
 var bb = cube.Box(-0.125, -0.125, -0.125, 0.125, 0.125, 0.125)
 
-func (b Brush) Use(p *player.Player) {
+func (b Brush) Use(p *player.Player, h *world.EntityHandle) {
 	const (
 		maxDistance  = 128
 		maxUndoCount = 40
 	)
-	vec := p.Rotation().Vec3().Mul(maxDistance)
-	pos := p.Position().Add(mgl64.Vec3{0, p.EyeHeight()})
-
-	p.H().ExecWorld(func(tx *world.Tx, e world.Entity) {
-		if e != p {
-			return
-		}
+	h.ExecWorld(func(tx *world.Tx, e world.Entity) {
+		vec := p.Rotation().Vec3().Mul(maxDistance)
+		pos := p.Position().Add(mgl64.Vec3{0, p.EyeHeight()})
 
 		final := pos.Add(vec)
 		if res, ok := trace.Perform(pos, final, tx, bb, nil); ok {

@@ -45,7 +45,7 @@ func (h *Handler) HandleItemUse(ctx *player.Context) {
 	held, _ := h.p.HeldItems()
 	if b, ok := find(held); ok {
 		ctx.Cancel()
-		go b.Use(h.p)
+		go b.Use(h.p, h.p.H())
 	}
 }
 
